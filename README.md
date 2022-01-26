@@ -4,7 +4,7 @@ El servidor de cálculo para docencia, patan, controla el acceso a un conjunto d
 ## Preparación del entorno local
 1. Comprueba que tienes lo necesario para, al menos, poder ejecutar proyectos genéricos en tu sistema (ver [tabla](#software-recomendado)).
 2. Descarga y guarda el ejecutable en cualquier lugar mediante un navegador web.
-<pre><code><a href="https://raw.githubusercontent.com/MAProsper/patan-run/src/patan-run">https://raw.githubusercontent.com/MAProsper/patan-run/src/patan-run</a></code></pre>
+<pre><code><a href="https://raw.githubusercontent.com/MAProsper/patan-run/patan-run">https://raw.githubusercontent.com/MAProsper/patan-run/patan-run</a></code></pre>
 3. Instala el ejecutable con el siguiente comando; sustituye la ruta del ejecutable guardado y el usuario por los tuyos concretos.
 ```bash
 bash ./ejecutable alXXXXXX install
