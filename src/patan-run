@@ -1,0 +1,94 @@
+#!/bin/bash
+# Easy remote execution of projects in patan.act.uji.es
+# Author: Miguel Ángel Prosper Quíros (al386125@uji.es)
+# Source: gist.github.com/MAProsper
+# License: BSD 3-Clause
+
+info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
+NAME='patan-run'; ID="${ID-$(date +%F-%H-%M-%S)}"; TYPE="$2"; VAR="$(arg "$@")"
+ORG=".local/state/$NAME/$ID"; TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"
+
+#!/man/patan-run
+# user type [args...]	(cd to project's root first)
+# 	user	al386125	(skip username if installed)
+# 	type	java, ...	(type of action or project)
+# 	args	...		(type specific arguments)
+
+#!/bin/patan-run
+EXP='export PATH="$HOME/.local/bin:$PATH"'; LN="alias $NAME='$NAME $1'"
+SERVER="$1@patan.act.uji.es"; PROXY="$1@lynx.uji.es"; TMOUT="${TMOUT-256}"
+EXE="$HOME/.local/bin/$NAME"; ENV="${ENV-$HOME/.${SHELL##*/}rc}"; SCP="$HOME/.ssh/$NAME"
+SSH="ssh -o PreferredAuthentications=password -o ControlPersist=$TMOUT -XS $SCP -J $PROXY $SERVER"
+exe() { echo "set -- $VAR; ID=$ID"; tuc 'bin' 'bash'; tuc "$1" "$NAME"; tuc "$1"; }
+tuc() { sed "\~^#!/$1/${2:-$TYPE}$~,/^#!/!d;//d" "$0"; }
+cpx() { mkdir -p "$(dirname "$1")"; install "$0" "$1"; }
+man() { err "$(tuc 'man' "$1" | cut -c3-)"; }
+ret() { err 'restart terminal to finish'; }
+nul() { "$@" &>'/dev/null'; }
+
+# validate arguments
+[ "$BASH_SOURCE" = "$0" ]	|| err 'must execute directly locally'
+[ $# -ge 2 ]			|| man "$NAME"
+[[ "$1" =~ ^[a-z0-9]+$ ]]	|| err 'username not valid'
+[ "$(tuc bin; tuc srv)" ]	|| err 'type not supported'
+
+# main fragment
+. '/dev/stdin' <<<"$(tuc 'bin')"; set -e
+nul $SSH -O 'check' || { rm -f "$SCP"; MCP='-M'; }
+trap 'rm -r "$TMP"' EXIT; cpx "$JOB"; exe 'job' >"$_"
+info "$PWD"; PREV=$($SSH "$MCP" "mkdir -p .ssh $ORG; ls \$_/.. | sed 'x;\$!d'")
+info 'transferring workspace'; rsync -ae "$SSH" --link-dest="../$PREV" './' ":$ORG"
+$SSH -qt "$(exe srv)"; exit
+
+#!/srv/patan-run
+cd "$ORG"; QSUB="qsub -${DISPLAY+X}Ix $PWD/$JOB"; LOG="$TMP/log"
+job() { info "$VAR" &>"$LOG"; script -qac "$QSUB $(arg "$@")" "$LOG"; }
+
+#!/job/patan-run
+cd "$PBS_O_WORKDIR"; trap 'info "exit code $?"' EXIT
+
+#!/bin/install
+arc() { grep -qxsF "$1" "$ENV" || echo "$1" >>"$ENV"; }
+cpx "$TMP"; nul "$SHELL" -c "$NAME remove"; mv "$TMP" "$EXE"; arc "$EXP"; arc "$LN"; ret
+
+#!/bin/remove
+[ -f "$ENV" ] && grep -vxF "$LN" <<<"$(<"$ENV")" >"$ENV"; rm "$0"; ret
+
+#!/srv/shell
+[ $# -ge 3 ]	|| "$SHELL"
+[ $# -ge 3 ]	&& "$SHELL" -c "$(arg "${@:3}")"
+
+#!/man/java
+# main [args...]
+# 	main	package.class	(main method's class name)
+# 	args	...		(program arguments)
+
+#!/bin/java
+[ $# -ge 3 ]	|| man
+[ "$3" ]	|| err 'main class cannot be empty'
+
+#!/srv/java
+job -q 'epyc' -l 'nodes=1:ppn=16'
+
+#!/job/java
+find '.' -name '*.java' -exec javac -encoding 'UTF-8' -d "$TMP" '{}' '+'
+java -cp "$TMP" "${@:3}"
+
+#!/man/mpi
+# main nodes [args...]
+# 	main	main.c	(main file's relative path)
+# 	nodes	16	(number of nodes to utilize)
+# 	args	...	(program arguments)
+
+#!/bin/mpi
+[ $# -ge 4 ]		|| man
+[ -f "$3" ]		|| err 'main file not found'
+[[ "$4" =~ ^[0-9]+$ ]]	|| err 'nodes must be positive integer'
+
+#!/srv/mpi
+job -q 'bi' -l "nodes=$4:ppn=4"
+
+#!/job/mpi
+EXE="$TMP/exe"; NODE="$TMP/node"
+uniq "$PBS_NODEFILE" >"$NODE"; mpicc "$3" -o "$EXE"
+mpirun -mca 'btl_tcp_if_include' 'eth0' -np "$4" -machinefile "$NODE" "$EXE" "${@:5}"
