@@ -2,7 +2,14 @@
 El servidor de cálculo para docencia, patan, controla el acceso a un conjunto de nodos de cálculo, sobre los cuales se pueden realizar las pruebas de rendimiento requeridas en los ejercicios de prácticas. Para este fin, el servidor hace uso del gestor de colas PBS (Portable Batch System), comúnmente utilizado en el ámbito de la Computación de Altas Prestaciones (High Performance Computing). Seguidamente se describen los pasos a seguir para utilizar este servidor.
 
 ## Preparación del entorno local
-1. Comprueba que tienes lo necesario para, al menos, poder ejecutar proyectos genéricos en tu sistema (ver [tabla](#software-recomendado)).
+1. Comprueba que tienes lo necesario para, al menos, poder ejecutar proyectos genéricos en tu sistema.
+
+| Sistema | Proyecto genérico    | Proyecto gráfico                    |
+| ------- | -------------------- | ----------------------------------- |
+| Linux   | Terminal por defecto | Entorno incluido en el sistema      |
+| MacOS   | Terminal por defecto | [XQuartz](https://www.xquartz.org/) |
+| Windows | [WSL](https://docs.microsoft.com/es-es/windows/wsl) (ver [apéndice](doc/wsl.md)) | Entorno incluido según la versión                            |
+| Android | [Termux](https://play.google.com/store/apps/details?id=com.termux) | [XServer XSDL](https://play.google.com/store/apps/details?id=x.org.server) |
 
 2. Descarga y guarda el ejecutable en cualquier lugar mediante un navegador web.
 <pre><code><a href="https://raw.githubusercontent.com/MAProsper/patan-run/master/patan-run">https://raw.githubusercontent.com/MAProsper/patan-run/master/patan-run</a></code></pre>
@@ -13,14 +20,6 @@ bash ./ejecutable alXXXXXX install
 ```
 
 4. Reinicia el terminal para terminar la instalación.
-
-### Software recomendado
-| Sistema | Proyecto genérico    | Proyecto gráfico                    |
-| ------- | -------------------- | ----------------------------------- |
-| Linux   | Terminal por defecto | Entorno incluido en el sistema      |
-| MacOS   | Terminal por defecto | [XQuartz](https://www.xquartz.org/) |
-| Windows | [WSL](https://docs.microsoft.com/es-es/windows/wsl) (ver [apéndice](doc/wsl.md)) | Entorno incluido según la versión                            |
-| Android | [Termux](https://play.google.com/store/apps/details?id=com.termux) | [XServer XSDL](https://play.google.com/store/apps/details?id=x.org.server) |
 
 ## Ejecución de pruebas remotas
 **Importante**: Si una ejecución no responde, cancélala mediante Ctrl+C.
