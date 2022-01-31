@@ -4,7 +4,7 @@ El servidor de cálculo para docencia, patan, controla el acceso a un conjunto d
 ## Preparación del entorno local
 1. Comprueba que tienes lo necesario para, al menos, poder ejecutar proyectos genéricos en tu sistema (ver [tabla](#software-recomendado)).
 2. Descarga y guarda el ejecutable en cualquier lugar mediante un navegador web.
-<pre><code><a href="https://github.com/MAProsper/patan-run/blob/master/patan-run?raw=true">https://github.com/MAProsper/patan-run/blob/master/patan-run?raw=true</a></code></pre>
+<pre><code><a href="https://raw.githubusercontent.com/MAProsper/patan-run/master/patan-run">https://raw.githubusercontent.com/MAProsper/patan-run/master/patan-run</a></code></pre>
 3. Instala el ejecutable con el siguiente comando; sustituye la ruta del ejecutable guardado y el usuario por los tuyos concretos.
 ```bash
 bash ./ejecutable alXXXXXX install
@@ -17,7 +17,7 @@ bash ./ejecutable alXXXXXX install
 | - | - | - |
 | Linux | Terminal por defecto | Entorno incluido en el sistema |
 | MacOS | Terminal por defecto | [XQuartz](https://www.xquartz.org/) |
-| Windows | [WSL](https://docs.microsoft.com/es-es/windows/wsl) (ver [apéndice](#apéndice)) | Entorno incluido según la versión |
+| Windows | [WSL](https://docs.microsoft.com/es-es/windows/wsl) (ver [apéndice](doc/wsl.md)) | Entorno incluido según la versión |
 | Android | [Termux](https://play.google.com/store/apps/details?id=com.termux) | [XServer XSDL](https://play.google.com/store/apps/details?id=x.org.server) |
 
 ## Ejecución de pruebas remotas
@@ -64,7 +64,8 @@ Proyecto/
 patan-run mpi ruta nodos argumentos…
 ```
 
-## Otros
-[HISTORY](doc/history.md)
-[SUBCOMMAND](doc/subcommand.md)
-[WSL](doc/wsl.md)
+# Mas información
+- [Historial de ejecuciones](doc/history.md)
+- [Crear subcomandos](doc/subcommand.md)
+- [Uso avanzado](doc/advanced.md)
+- [Apendice (WSL)](doc/wsl.md)
