@@ -66,7 +66,7 @@ Proyecto/
 patan-run mpi ruta nodos argumentos…
 ```
 
-# Mas información
+# Más información
 - [Historial de ejecuciones](doc/history.md)
 - [Crear subcomandos](doc/subcommand.md)
 - [Uso avanzado](doc/advanced.md)
