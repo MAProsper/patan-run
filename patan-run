@@ -10,7 +10,7 @@
 
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; VAR="$(arg "$@")"; TYPE="$2"; ID="${ID-$(date +%F-%H-%M-%S)}"
-TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"; ORG=".local/state/$NAME/$ID"
+TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"; HIST="${HIST-.local/state/$NAME}/$ID"
 
 #!/man/patan-run
 # user type [args...]	(cd to project's root first)
@@ -39,12 +39,12 @@ man() { err "$(tuc "${2-man}" "$1" | sed -n 's/# //p')"; }
 . '/dev/stdin' <<<"$(tuc usr)"
 nul $SSH -O 'check' || { rm -f "$SCP"; MCP='-M'; }
 trap 'rm -r "$TMP"' EXIT; cpx "$JOB"; exe 'job' >"$_"
-info "$PWD"; PREV=$($SSH "$MCP" "mkdir -p .ssh $ORG; ls \$_/.. | sed 'x;\$!d'")
-info 'transferring workspace'; rsync -ae "$SSH" --link-dest="../$PREV" './' ":$ORG"
+info "$PWD"; PREV=$($SSH "$MCP" "mkdir -p .ssh $HIST; ls \$_/.. | sed 'x;\$!d'")
+info 'transferring workspace'; rsync -ae "$SSH" --link-dest="../$PREV" './' ":$HIST"
 $SSH -qt "$(exe srv)"; exit
 
 #!/srv/patan-run
-cd "$ORG"; QSUB="qsub -${DISPLAY+X}Ix $PWD/$JOB"; LOG="$TMP/log"
+cd "$HIST"; QSUB="qsub -${DISPLAY+X}Ix $PWD/$JOB"; LOG="$TMP/log"
 job() { info "$VAR" &>"$LOG"; script -qac "$QSUB $(arg "$@")" "$LOG"; }
 
 #!/job/patan-run
