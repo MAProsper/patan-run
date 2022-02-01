@@ -23,7 +23,7 @@ SERVER="$1@patan.act.uji.es"; PROXY="${PROXY-$1}@lynx.uji.es"; SCP="$HOME/.ssh/$
 EXE="$HOME/.local/bin/$NAME"; ENV="${ENV-$HOME/.${SHELL##*/}rc}"; RC="alias '$NAME=$(arg "$EXE")$1'"
 SSH="ssh -o PreferredAuthentications=password -o ControlPersist=$TMOUT -XS $SCP -J $PROXY $SERVER"
 exe() { echo "set -- $VAR; ID=$ID"; tuc 'bin' 'bash'; tuc "$1" "$NAME"; tuc "$1"; }
-rmc() { [ -f "$ENV" ] && grep -vw "^${RC%=*}" <<<"$(<"$ENV")" >"$ENV" || :; }
+rmc() { [ -f "$ENV" ] && grep -vw "^${RC%%=*}" <<<"$(<"$ENV")" >"$ENV" || :; }
 ret() { err 'restart terminal to finish'; }; nul() { "$@" &>'/dev/null'; }
 tuc() { sed -E "\~^#!/$1/${2:-$TYPE}([[:space:]]|$)~,/^#!/!d;//d" "$0"; }
 cpx() { mkdir -p "${1%/*}"; [ "$0" -ef "$1" ] || install "$0" "$1"; }
