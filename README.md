@@ -14,7 +14,7 @@ El servidor de cálculo para docencia, patan, controla el acceso a un conjunto d
 2. Descarga y guarda el ejecutable en cualquier lugar mediante un navegador web.
 <pre><code><a href="https://raw.githubusercontent.com/MAProsper/patan-run/master/patan-run">https://raw.githubusercontent.com/MAProsper/patan-run/master/patan-run</a></code></pre>
 
-3. Instala el ejecutable con el siguiente comando; sustituye la ruta del ejecutable guardado y el usuario por los tuyos concretos.
+3. Instala el ejecutable con el siguiente comando, sustituye la ruta del ejecutable guardado y el usuario por los tuyos concretos.
 ```bash
 bash ./ejecutable alXXXXXX install
 ```
@@ -22,9 +22,9 @@ bash ./ejecutable alXXXXXX install
 4. Reinicia el terminal para terminar la instalación.
 
 ## Ejecución de pruebas remotas
-**Importante**: Si una ejecución no responde, cancélala mediante Ctrl+C.
+**Importante**: Si una ejecución no responde, cancélala mediante <kbd>Ctrl</kbd>+<kbd>C</kbd>.
 
-1. Desde un terminal, posiciónate en la raíz del proyecto con el comando cd; en este ejemplo sería la carpeta Proyecto.
+1. Desde un terminal, posiciónate en la raíz del proyecto con el comando `cd`, en este ejemplo sería la carpeta `Proyecto`.
 ```
 Proyecto/
 ├── Proyecto.iml
@@ -37,7 +37,7 @@ Proyecto/
 ```
 
 ### Proyectos Java
-2. Mira el fichero donde está declarado el método main que quieres ejecutar y junta lo que pone en la línea package (si hubiera) con el nombre de la clase para obtener el nombre absoluto de la clase; en este ejemplo sería `paquete.subpaquete.Clase`.
+2. Mira el fichero donde está declarado el método `main` que quieres ejecutar y junta lo que pone en la línea `package` (si hubiera) con el nombre de la clase para obtener el nombre absoluto de la clase, en este ejemplo sería `paquete.subpaquete.Clase`.
 ```java
 package paquete.subpaquete;
 
@@ -46,13 +46,13 @@ public class Clase {
 }
 ```
 
-3. Ejecuta el proyecto con el siguiente comando; sustituye el nombre absoluto y los argumentos (si hubiera) por los tuyos concretos.
+3. Ejecuta el proyecto con el siguiente comando, sustituye el nombre absoluto y los argumentos (si hubiera) por los tuyos concretos.
 ```bash
 patan-run java nombreAbsoluto argumentos…
 ```
 
 ### Proyectos MPI
-2. Obtén la ruta relativa del fichero a ejecutar; en este ejemplo sería `./src/main.c`.
+2. Obtén la ruta relativa del fichero a ejecutar, en este ejemplo sería `./src/main.c`.
 ```
 Proyecto/
 ├── src/
@@ -60,7 +60,7 @@ Proyecto/
 └── target/
 ```
 
-3. Ejecuta el proyecto con el siguiente comando; sustituye la ruta relativa, el número de nodos y los argumentos (si hubiera) por los tuyos concretos.
+3. Ejecuta el proyecto con el siguiente comando, sustituye la ruta relativa, el número de nodos y los argumentos (si hubiera) por los tuyos concretos.
 ```bash
 patan-run mpi ruta nodos argumentos…
 ```

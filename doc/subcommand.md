@@ -24,7 +24,7 @@ Cada una de las líneas en este bloque siempre ha de comenzar por una almohadill
 ```
 
 ### `usr`: Verificación local de los argumentos antes de conectar
-La primera línea es la verificación del número de argumentos; si no se cumple, se debe ejecutar el método man para mostrar la sección anterior. Las siguientes líneas verifican cada argumento; si no se cumple alguno, se debe ejecutar el método err dando una explicación.
+La primera línea es la verificación del número de argumentos; si no se cumple, se debe ejecutar el método man para mostrar la sección anterior. Las siguientes líneas verifican cada argumento; si no se cumple alguno, se debe ejecutar el método `err` dando una explicación.
 ```bash
 #!/usr/mpi
 [ $# -ge 4 ]			|| man
