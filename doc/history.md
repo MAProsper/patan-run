@@ -2,6 +2,7 @@
 Toda ejecución que llega al servidor siempre queda registrada para su posterior evaluación por el profesorado.
 
 **Importante**: Eliminar estos ficheros podría acarrear la suspensión de las prácticas.
+
 Cada vez que se ejecuta un proyecto, este queda almacenado en `~/.local/state/patan-run/`. Los proyectos están organizados en directorios, los cuales tienen como nombre la fecha y la hora de su ejecución. Este sería un ejemplo después de ejecutar un proyecto Java.
 
 ```
