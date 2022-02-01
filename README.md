@@ -3,6 +3,7 @@ El servidor de cálculo para docencia, patan, controla el acceso a un conjunto d
 
 ## Preparación del entorno local
 1. Comprueba que tienes lo necesario para, al menos, poder ejecutar proyectos genéricos en tu sistema.
+
 | Sistema | Proyecto genérico  | Proyecto gráfico                    |
 | ------- | ------------------ | ----------------------------------- |
 | Linux   | :heavy_check_mark: | :heavy_check_mark:                  |
