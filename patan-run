@@ -22,7 +22,7 @@ TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"; ORG=".local/state/$NAME/$ID"
 SERVER="$1@patan.act.uji.es"; PROXY="${PROXY-$1}@lynx.uji.es"; SCP="$HOME/.ssh/$NAME"; TMOUT="${TMOUT-256}"
 EXE="$HOME/.local/bin/$NAME"; ENV="${ENV-$HOME/.${SHELL##*/}rc}"; RC="alias '$NAME=$(arg "$EXE") $1'"
 SSH="ssh -o PreferredAuthentications=password -o ControlPersist=$TMOUT -XS $SCP -J $PROXY $SERVER"
-exe() { echo "set -- $VAR; ID=$ID"; tuc 'bin' "$NAME"; tuc "$1" "$NAME"; tuc "$1"; }
+exe() { echo "set -- $VAR; ID=$ID"; tuc 'bin' 'bash'; tuc "$1" "$NAME"; tuc "$1"; }
 ret() { err 'restart terminal to finish'; }; nul() { "$@" &>'/dev/null'; }
 man() { err "$(tuc "${2-man}" "$1" | sed -n 's/# //p')"; }
 tuc() { sed "\~^#!/$1/${2:-$TYPE}$~,/^#!/!d;//d" "$0"; }
