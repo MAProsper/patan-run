@@ -4,11 +4,11 @@ El servidor de cálculo para docencia, patan, controla el acceso a un conjunto d
 ## Preparación del entorno local
 1. Comprueba que tienes lo necesario para, al menos, poder ejecutar proyectos genéricos en tu sistema.
 
-| Sistema | Proyecto genérico    | Proyecto gráfico                    |
-| ------- | -------------------- | ----------------------------------- |
-| Linux   | Terminal por defecto | Entorno incluido en el sistema      |
-| MacOS   | Terminal por defecto | [XQuartz](https://www.xquartz.org/) |
-| Windows | [WSL](https://docs.microsoft.com/es-es/windows/wsl) ([guía](docs/wsl.md)) | Entorno incluido según la versión                            |
+| Sistema | Proyecto genérico  | Proyecto gráfico                    |
+| ------- | ------------------ | ----------------------------------- |
+| Linux   | :heavy_check_mark: | :heavy_check_mark:                  |
+| MacOS   | :heavy_check_mark: | [XQuartz](https://www.xquartz.org/) |
+| Windows | [WSL](https://docs.microsoft.com/es-es/windows/wsl) ([guía](docs/wsl.md)) | :white_check_mark: (depende de version)                             |
 | Android | [Termux](https://play.google.com/store/apps/details?id=com.termux) | [XServer XSDL](https://play.google.com/store/apps/details?id=x.org.server) |
 
 2. Descarga y guarda el ejecutable en cualquier lugar mediante un navegador web.
