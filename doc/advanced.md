@@ -1,21 +1,21 @@
 # Subcomandos adicionales
 ## Desinstalación
-```bash
+```
 patan-run remove
 ```
 
 ## Terminal remota
-```bash
+```
 patan-run ssh [args...]
 ```
 
 ## Ayuda con el subcomado
-```bash
+```
 patan-run [java|...]
 ```
 
 ## Información de la herramienta actual
-```bash
+```
 patan-run version
 ```
 
