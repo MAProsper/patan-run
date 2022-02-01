@@ -8,7 +8,7 @@ El servidor de cálculo para docencia, patan, controla el acceso a un conjunto d
 | ------- | -------------------- | ----------------------------------- |
 | Linux   | Terminal por defecto | Entorno incluido en el sistema      |
 | MacOS   | Terminal por defecto | [XQuartz](https://www.xquartz.org/) |
-| Windows | [WSL](https://docs.microsoft.com/es-es/windows/wsl) (ver [guía](doc/wsl.md)) | Entorno incluido según la versión                            |
+| Windows | [WSL](https://docs.microsoft.com/es-es/windows/wsl) (ver [guía](docs/wsl.md)) | Entorno incluido según la versión                            |
 | Android | [Termux](https://play.google.com/store/apps/details?id=com.termux) | [XServer XSDL](https://play.google.com/store/apps/details?id=x.org.server) |
 
 2. Descarga y guarda el ejecutable en cualquier lugar mediante un navegador web.
@@ -66,7 +66,7 @@ patan-run mpi ruta nodos argumentos…
 ```
 
 # Más información
-- [Historial de ejecuciones](doc/history.md)
-- [Crear subcomandos](doc/subcommand.md)
-- [Uso avanzado](doc/advanced.md)
-- [Guia WSL](doc/wsl.md)
+- [Historial de ejecuciones](docs/history.md)
+- [Crear subcomandos](docs/subcommand.md)
+- [Uso avanzado](docs/advanced.md)
+- [Guia WSL](docs/wsl.md)
