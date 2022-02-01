@@ -1,5 +1,6 @@
 # Lanzamiento de trabajos en patan
-El servidor de cálculo para docencia, patan, controla el acceso a un conjunto de nodos de cálculo, sobre los cuales se pueden realizar las pruebas de rendimiento requeridas en los ejercicios de prácticas. Para este fin, el servidor hace uso del gestor de colas PBS (Portable Batch System), comúnmente utilizado en el ámbito de la Computación de Altas Prestaciones (High Performance Computing). Seguidamente se describen los pasos a seguir para utilizar este servidor.
+El servidor de cálculo para docencia, patan, controla el acceso a un conjunto de nodos de cálculo, sobre los cuales se pueden realizar las pruebas de rendimiento requeridas en los ejercicios de prácticas. Para este fin, el servidor hace uso del gestor de colas PBS, comúnmente utilizado en el ámbito de la Computación de Altas Prestaciones (High Performance Computing). Seguidamente se describen los pasos a seguir para utilizar este servidor.
+*[PBS]: Portable Batch System
 
 ## Preparación del entorno local
 1. Comprueba que tienes lo necesario para, al menos, poder ejecutar proyectos genéricos en tu sistema.
