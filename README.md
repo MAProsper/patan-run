@@ -47,7 +47,7 @@ public class Clase {
 ```
 
 3. Ejecuta el proyecto con el siguiente comando, sustituye el nombre absoluto y los argumentos (si hubiera) por los tuyos concretos.
-```bash
+```
 patan-run java nombreAbsoluto argumentos…
 ```
 
@@ -61,7 +61,7 @@ Proyecto/
 ```
 
 3. Ejecuta el proyecto con el siguiente comando, sustituye la ruta relativa, el número de nodos y los argumentos (si hubiera) por los tuyos concretos.
-```bash
+```
 patan-run mpi ruta nodos argumentos…
 ```
 
