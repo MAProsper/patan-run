@@ -6,7 +6,7 @@
 # 	tester		Adrián Masiá Moreno		(al386159@uji.es)
 # 	tester		Adrián Luque Bueso		(al387532@uji.es)
 # 	license		BSD 3-Clause
-# 	version		6.1
+# 	version		6.1.0
 
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; VAR="$(arg "$@")"; TYPE="$2"; ID="${ID-$(date +%F-%H-%M-%S)}"
