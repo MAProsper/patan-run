@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # easy remote execution of projects in patan.act.uji.es
 # 	source		https://github.com/MAProsper/patan-run
 # 	developer	Miguel Ángel Prosper Quíros	(al386125@uji.es)
@@ -20,13 +20,14 @@ TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"; ORG=".local/state/$NAME/$ID"
 
 #!/usr/patan-run
 SERVER="$1@patan.act.uji.es"; PROXY="${PROXY-$1}@lynx.uji.es"; SCP="$HOME/.ssh/$NAME"; TMOUT="${TMOUT-256}"
-EXE="$HOME/.local/bin/$NAME"; ENV="${ENV-$HOME/.${SHELL##*/}rc}"; RC="alias '$NAME=$(arg "$EXE") $1'"
+EXE="$HOME/.local/bin/$NAME"; ENV="${ENV-$HOME/.${SHELL##*/}rc}"; RC="alias '$NAME=$(arg "$EXE")$1'"
 SSH="ssh -o PreferredAuthentications=password -o ControlPersist=$TMOUT -XS $SCP -J $PROXY $SERVER"
 exe() { echo "set -- $VAR; ID=$ID"; tuc 'bin' 'bash'; tuc "$1" "$NAME"; tuc "$1"; }
+rmc() { [ -f "$ENV" ] && grep -v "^${RC%%/*}" <<<"$(<"$ENV")" >"$ENV" || :; }
 ret() { err 'restart terminal to finish'; }; nul() { "$@" &>'/dev/null'; }
+tuc() { sed -E "\~^#!/$1/${2:-$TYPE}([[:space:]]|$)~,/^#!/!d;//d" "$0"; }
+cpx() { mkdir -p "${1%/*}"; [ "$0" -ef "$1" ] || install "$0" "$1"; }
 man() { err "$(tuc "${2-man}" "$1" | sed -n 's/# //p')"; }
-tuc() { sed "\~^#!/$1/${2:-$TYPE}$~,/^#!/!d;//d" "$0"; }
-cpx() { mkdir -p "${1%/*}"; install "$0" "$1"; }
 
 # validate arguments
 [ "$BASH_SOURCE" = "$0" ]	|| err 'must execute directly locally'
@@ -35,7 +36,7 @@ cpx() { mkdir -p "${1%/*}"; install "$0" "$1"; }
 [ "$(tuc usr; tuc srv)" ]	|| err 'type not supported'
 
 # main fragment
-. '/dev/stdin' <<<"$(tuc 'usr')"; set -e
+. '/dev/stdin' <<<"$(tuc usr)"
 nul $SSH -O 'check' || { rm -f "$SCP"; MCP='-M'; }
 trap 'rm -r "$TMP"' EXIT; cpx "$JOB"; exe 'job' >"$_"
 info "$PWD"; PREV=$($SSH "$MCP" "mkdir -p .ssh $ORG; ls \$_/.. | sed 'x;\$!d'")
@@ -53,11 +54,10 @@ cd "$PBS_O_WORKDIR"; trap 'info "exit code $?"' EXIT
 man 'bash' 'bin'
 
 #!/usr/install
-trap 'mv "$TMP" "$EXE"' EXIT; cpx "./$TMP"; nul "$SHELL" -c "$NAME remove"
-grep -qxsF "$RC" "$ENV" || echo "$RC" >>"$ENV"; cpx "$EXE"; ret
+rmc; echo "$RC" >>"$ENV"; cpx "$EXE"; ret
 
 #!/usr/remove
-[ -f "$ENV" ] && grep -vxF "RC" <<<"$(<"$ENV")" >"$ENV"; rm "$0"; ret
+rmc; rm "$0"; ret
 
 #!/srv/ssh
 [ $# -ge 3 ]	|| "$SHELL"
