@@ -1,5 +1,5 @@
 # Guía WSL
-WSL (subsistema de Windows para Linux) permite a los usuarios ejecutar un entorno de Linux, incluyendo la mayoría de herramientas de línea de comandos, utilidades y aplicaciones, directamente en Windows, sin modificar y sin la sobrecarga de una máquina virtual tradicional o una configuración de arranque dual.
+**WSL** (subsistema de Windows para Linux) permite a los usuarios ejecutar un entorno de Linux, incluyendo la mayoría de herramientas de línea de comandos, utilidades y aplicaciones, directamente en Windows, sin modificar y sin la sobrecarga de una máquina virtual tradicional o una configuración de arranque dual.
 
 ## Instalación
 Si tienes una instalación de Windows 10 lo suficientemente reciente o una versión posterior puedes utilizar el método sencillo. No pasa nada si lo pruebas y falla, simplemente pasa al método manual.
