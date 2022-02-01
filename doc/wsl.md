@@ -27,7 +27,7 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 
 4. Reinicia el ordenador para que los anteriores cambios surtan efecto.
 
-5. Descarga y ejecuta el instalador del kernel (núcleo) de Linux.
+5. Descarga y ejecuta el instalador del núcleo de Linux.
 <pre><code><a href="https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi">https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi</a></code></pre>
 
 6. Reinicia el ordenador para que la instalación surta efecto.
