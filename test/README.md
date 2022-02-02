@@ -1,5 +1,5 @@
 # Java
-Shows a window and after 1s writes `1` to the console. Manually close the window later.
+Shows a window and after 5s writes `1` to the console. Manually close the window later.
 ```bash
 patan-run java Main 1
 ```

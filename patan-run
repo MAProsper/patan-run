@@ -21,7 +21,7 @@ TYPE="$2"; VAR="$(arg "$@")"; TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"
 #!/usr/patan-run
 SERVER="$1@patan.act.uji.es"; PROXY="${PROXY-$1}@lynx.uji.es"; SCP="$HOME/.ssh/$NAME"; TMOUT="${TMOUT-256}"
 EXE="$HOME/.local/bin/$NAME"; ENV="${ENV-$HOME/.${SHELL##*/}rc}"; RC="alias '$NAME=$(arg "$EXE")$1'"
-SSH="ssh -o PreferredAuthentications=password -o ControlPersist=$TMOUT -XS $SCP -J $PROXY $SERVER"
+SSH="ssh -o PreferredAuthentications=password -o ControlPersist=$TMOUT -YS $SCP -J $PROXY $SERVER"
 exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'bin' 'bash'; tuc "$1" "$NAME"; tuc "$1"; }
 rmc() { [ -f "$ENV" ] && grep -vw "^${RC%%=*}" <<<"$(<"$ENV")" >"$ENV" || :; }
 ret() { err 'restart terminal to finish'; }; nul() { "$@" &>'/dev/null'; }

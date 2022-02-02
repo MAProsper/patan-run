@@ -9,7 +9,7 @@ class Main {
 
             new Thread(() -> {
                 try {
-                    Thread.sleep(1L);
+                    Thread.sleep(5000L);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
