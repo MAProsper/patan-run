@@ -10,7 +10,7 @@
 
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; VAR="$(arg "$@")"; TYPE="$2"; ID="${ID-$(date +%F-%H-%M-%S)}"
-TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"; HIST="${HIST-.local/state/$NAME}/$ID"
+TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"; RWD="${HIST=.local/state/$NAME}/$ID"
 
 #!/man/patan-run
 # user type [args...]	(cd to project's root first)
@@ -22,7 +22,7 @@ TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"; HIST="${HIST-.local/state/$NAME}/$ID"
 SERVER="$1@patan.act.uji.es"; PROXY="${PROXY-$1}@lynx.uji.es"; SCP="$HOME/.ssh/$NAME"; TMOUT="${TMOUT-256}"
 EXE="$HOME/.local/bin/$NAME"; ENV="${ENV-$HOME/.${SHELL##*/}rc}"; RC="alias '$NAME=$(arg "$EXE")$1'"
 SSH="ssh -o PreferredAuthentications=password -o ControlPersist=$TMOUT -XS $SCP -J $PROXY $SERVER"
-exe() { echo "set -- $VAR; ID=$ID"; tuc 'bin' 'bash'; tuc "$1" "$NAME"; tuc "$1"; }
+exe() { echo "set -- $VAR; ID=$ID; HIST=$HIST"; tuc 'bin' 'bash'; tuc "$1" "$NAME"; tuc "$1"; }
 rmc() { [ -f "$ENV" ] && grep -vw "^${RC%%=*}" <<<"$(<"$ENV")" >"$ENV" || :; }
 ret() { err 'restart terminal to finish'; }; nul() { "$@" &>'/dev/null'; }
 tuc() { sed -E "\~^#!/$1/${2:-$TYPE}([[:space:]]|$)~,/^#!/!d;//d" "$0"; }
@@ -39,12 +39,12 @@ man() { err "$(tuc "${2-man}" "$1" | sed -n 's/# //p')"; }
 . '/dev/stdin' <<<"$(tuc usr)"
 nul $SSH -O 'check' || { rm -f "$SCP"; MCP='-M'; }
 trap 'rm -r "$TMP"' EXIT; cpx "$JOB"; exe 'job' >"$_"
-info "$PWD"; PREV=$($SSH "$MCP" "mkdir -p .ssh $HIST; ls \$_/.. | sed 'x;\$!d'")
-info 'transferring workspace'; rsync -ae "$SSH" --link-dest="../$PREV" './' ":$HIST"
+info "$PWD"; PREV=$($SSH "$MCP" "mkdir -p .ssh $RWD; ls \$_/.. | sed 'x;\$!d'")
+info 'transferring workspace'; rsync -ae "$SSH" --link-dest="../$PREV" './' ":$RWD"
 $SSH -qt "$(exe srv)"; exit
 
 #!/srv/patan-run
-cd "$HIST"; QSUB="qsub -${DISPLAY+X}Ix $PWD/$JOB"; LOG="$TMP/log"
+cd "$RWD"; QSUB="qsub -${DISPLAY+X}Ix $PWD/$JOB"; LOG="$TMP/log"
 job() { info "$VAR" &>"$LOG"; script -qac "$QSUB $(arg "$@")" "$LOG"; }
 
 #!/job/patan-run
