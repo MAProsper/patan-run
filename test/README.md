@@ -8,7 +8,7 @@ patan-run java Main 1
 ```
 
 ## MPI
-Writes `1` to console, requests number and writes it to the console.
+Writes `1` to the console, requests number and writes it back to the console.
 ```bash
 patan-run mpi mpi.c 2 1
 ```
