@@ -35,7 +35,7 @@ man() { err "$(tuc "${2-man}" "$1" | sed -n 's/# //p')"; }
 [[ "$1" =~ ^[a-z0-9]+$ ]]	|| err 'username not valid'
 [ "$(tuc usr; tuc srv)" ]	|| err 'type not supported'
 
-# main fragment #!/job/mpi
+# main fragment
 . '/dev/stdin' <<<"$(tuc usr)"
 nul $SSH -O 'check' || { rm -f "$SCP"; MCP='-M'; }
 trap 'rm -r "$TMP"' EXIT; cpx "$JOB"; exe 'job' >"$_"
