@@ -54,11 +54,11 @@ cd "$PBS_O_WORKDIR"; trap 'info "exit code $?"' EXIT
 #!/usr/version
 man 'bash' 'bin'
 
-#!/usr/update
-exec wget --show-progress -qO "$0" "https://raw.githubusercontent.com/MAProsper/patan-run/master/patan-run"
-
 #!/usr/install
 rmc; echo "$RC" >>"$ENV"; cpx "$EXE"; ret
+
+#!/usr/update
+exec wget --show-progress -qO "$0" "https://raw.githubusercontent.com/MAProsper/patan-run/master/patan-run"
 
 #!/usr/remove
 rmc; rm "$0"; ret
