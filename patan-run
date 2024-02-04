@@ -6,7 +6,7 @@
 # 	tester		Adrián Masiá Moreno		(al386159@uji.es)
 # 	tester		Adrián Luque Bueso		(al387532@uji.es)
 # 	license		BSD 3-Clause
-# 	version		6.1.0
+# 	version		6.2.0
 
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S)}"
@@ -19,9 +19,10 @@ TYPE="$2"; VAR="$(arg "$@")"; TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"
 # 	args	...		(type specific arguments)
 
 #!/usr/patan-run
-SERVER="$1@patan.act.uji.es"; PROXY="${PROXY-$1}@lynx.uji.es"; SCP="$HOME/.ssh/$NAME"; TMOUT="${TMOUT-256}"
-EXE="$HOME/.local/bin/$NAME"; ENV="${ENV-$HOME/.${SHELL##*/}rc}"; RC="alias '$NAME=$(arg "$EXE")$1'"
-SSH="ssh -o PreferredAuthentications=password -o ControlPersist=$TMOUT -YS $SCP -J $PROXY $SERVER"
+SERVER="$1@patan.act.uji.es"; PROXY="${PROXY-$1}@lynx.uji.es"
+ENV="${ENV-$HOME/.${SHELL##*/}rc}"; EXE="$HOME/.local/bin/$NAME"; SCP="$HOME/.ssh/$NAME"
+OPT="-o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa -o PreferredAuthentications=password"
+SSH="ssh $OPT -o ControlPersist=${TMOUT=256} -${DISPLAY+Y}S $SCP -J $PROXY $SERVER"; RC="alias '$NAME=$(arg "$EXE")$1'"
 exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'bin' 'bash'; tuc "$1" "$NAME"; tuc "$1"; }
 rmc() { [ -f "$ENV" ] && grep -vw "^${RC%%=*}" <<<"$(<"$ENV")" >"$ENV" || :; }
 ret() { err 'restart terminal to finish'; }; nul() { "$@" &>'/dev/null'; }
@@ -39,7 +40,7 @@ man() { err "$(tuc "${2-man}" "$1" | sed -n 's/# //p')"; }
 . '/dev/stdin' <<<"$(tuc usr)"
 nul $SSH -O 'check' || { rm -f "$SCP"; MCP='-M'; }
 trap 'rm -r "$TMP"' EXIT; cpx "$JOB"; exe 'job' >"$_"
-info "$PWD"; PREV=$($SSH "$MCP" "mkdir -p .ssh $RWD; ls \$_/.. | sed 'x;\$!d'")
+info "$PWD"; PREV=$($SSH "$MCP" "mkdir -p $RWD; ls \$_/.. | sed 'x;\$!d'")
 info 'transferring workspace'; rsync -ae "$SSH" --link-dest="../$PREV" './' ":$RWD"
 $SSH -qt "$(exe srv)"; exit
 
@@ -52,6 +53,9 @@ cd "$PBS_O_WORKDIR"; trap 'info "exit code $?"' EXIT
 
 #!/usr/version
 man 'bash' 'bin'
+
+#!/usr/update
+exec wget --show-progress -qO "$0" "https://raw.githubusercontent.com/MAProsper/patan-run/master/patan-run"
 
 #!/usr/install
 rmc; echo "$RC" >>"$ENV"; cpx "$EXE"; ret
