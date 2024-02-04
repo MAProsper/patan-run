@@ -51,9 +51,6 @@ job() { info "$VAR" &>"$LOG"; script -qac "$QSUB $(arg "$@")" "$LOG"; }
 #!/job/patan-run
 cd "$PBS_O_WORKDIR"; trap 'info "exit code $?"' EXIT
 
-#!/usr/version
-man 'bash' 'bin'
-
 #!/usr/install
 rmc; echo "$RC" >>"$ENV"; cpx "$EXE"; ret
 
@@ -62,6 +59,9 @@ exec wget --show-progress -qO "$0" "https://raw.githubusercontent.com/MAProsper/
 
 #!/usr/remove
 rmc; rm "$0"; ret
+
+#!/usr/version
+man 'bash' 'bin'
 
 #!/srv/ssh
 [ $# -ge 3 ]	|| "$SHELL"
