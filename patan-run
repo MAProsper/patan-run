@@ -25,10 +25,10 @@ OPT="-o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa -o Prefe
 SSH="ssh $OPT -o ControlPersist=${TMOUT=256} -${DISPLAY+Y}S $SCP -J $PROXY $SERVER"; RC="alias '$NAME=$(arg "$EXE")$1'"
 exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'bin' 'bash'; tuc "$1" "$NAME"; tuc "$1"; }
 rmc() { [ -f "$ENV" ] && grep -vw "^${RC%%=*}" <<<"$(<"$ENV")" >"$ENV" || :; }
-ret() { err 'restart terminal to finish'; }; nul() { "$@" &>'/dev/null'; }
 cpx() { mkdir -p "${1%/*}"; [ "$0" -ef "$1" ] || install "$0" "$1"; }
 tuc() { awk "/^#!/{r=0}\$1~/#!\/$1\/${2:-$TYPE}/{r=1}r" "$0"; }
 man() { err "$(tuc "${2-man}" "$1" | sed -n 's/# //p')"; }
+ret() { err 'restart terminal to finish'; }
 
 # validate arguments
 [ "$BASH_SOURCE" = "$0" ]	|| err 'must execute directly locally'
@@ -38,8 +38,8 @@ man() { err "$(tuc "${2-man}" "$1" | sed -n 's/# //p')"; }
 
 # main fragment
 . '/dev/stdin' <<<"$(tuc usr)"
-nul $SSH -O 'check' || { rm -f "$SCP"; MCP='-M'; }
 trap 'rm -r "$TMP"' EXIT; cpx "$JOB"; exe 'job' >"$_"
+$SSH -O 'check' &>'/dev/null' || { rm -f "$SCP"; MCP='-M'; }
 info "$PWD"; PREV=$($SSH "$MCP" "mkdir -p $RWD; ls \$_/.. | sed 'x;\$!d'")
 info 'transferring workspace'; rsync -ae "$SSH" --link-dest="../$PREV" './' ":$RWD"
 $SSH -qt "$(exe srv)"; exit
