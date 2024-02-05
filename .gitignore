@@ -1,4 +1,3 @@
-/share/
 .*
 !/.gitignore
 !/.github/
