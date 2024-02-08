@@ -45,7 +45,7 @@ info 'transferring workspace'; rsync -ae "$SSH" --link-dest="../$PREV" './' ":$R
 $SSH -qt "$(exe srv)"; exit
 
 #!/srv/patan-run
-cd "$RWD"; QSUB="qsub -${DISPLAY+X}IxN "$2" $PWD/$JOB"; LOG="$TMP/log"
+cd "$RWD"; QSUB="qsub -${DISPLAY+X}Ix $PWD/$JOB"; LOG="$TMP/log"
 job() { info "$VAR" &>"$LOG"; script -qac "$QSUB $(arg "$@")" "$LOG"; }
 
 #!/job/patan-run
