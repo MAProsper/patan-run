@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 	#pragma omp parallel
 	{
 		id = omp_get_thread_num();
-		printf("P%d = %d\n", omp_get_thread_num(), n);
+		printf("P%d = %d\n", id, n);
 	}
 
 	#pragma omp barrier
@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
 	#pragma omp parallel
 	{
 		id = omp_get_thread_num();
-		printf("P%d = %d\n", omp_get_thread_num(), n);
+		printf("P%d = %d\n", id, n);
 	}
 	
 	return 0;
