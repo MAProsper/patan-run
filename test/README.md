@@ -8,7 +8,13 @@ patan-run java Main 1
 ```
 
 ## MPI
-Writes `1` to console, user writes `2`, writes `2` to the console.
+Writes `1` to console (as many as nodes), user writes `2`, writes `2` to the console (as many as nodes).
 ```bash
 patan-run mpi mpi.c 2 1
+```
+
+## OMP
+Writes `1` to console (as many as threads), user writes `2`, writes `2` to the console (as many as threads).
+```bash
+patan-run omp omp.c 1
 ```

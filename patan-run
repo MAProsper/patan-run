@@ -6,7 +6,7 @@
 # 	tester		Adrián Masiá Moreno		(al386159@uji.es)
 # 	tester		Adrián Luque Bueso		(al387532@uji.es)
 # 	license		BSD 3-Clause
-# 	version		6.2.0
+# 	version		7.0.0
 
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S)}"
@@ -45,7 +45,7 @@ info 'transferring workspace'; rsync -ae "$SSH" --link-dest="../$PREV" './' ":$R
 $SSH -qt "$(exe srv)"; exit
 
 #!/srv/patan-run
-cd "$RWD"; QSUB="qsub -${DISPLAY+X}Ix $PWD/$JOB"; LOG="$TMP/log"
+cd "$RWD"; QSUB="qsub -${DISPLAY+X}IxN "$2" $PWD/$JOB"; LOG="$TMP/log"
 job() { info "$VAR" &>"$LOG"; script -qac "$QSUB $(arg "$@")" "$LOG"; }
 
 #!/job/patan-run
@@ -98,3 +98,20 @@ job -q 'bi' -l "nodes=$4:ppn=4"
 EXE="$TMP/exe"; NODE="$TMP/node"
 uniq "$PBS_NODEFILE" >"$NODE"; mpicc "$3" -o "$EXE"
 mpirun -mca 'btl_tcp_if_include' 'eth0' -np "$4" -machinefile "$NODE" "$EXE" "${@:5}"
+
+#!/man/omp
+# main [args...]
+# 	main	main.c	(main file's relative path)
+# 	args	...	(program arguments)
+
+#!/usr/omp
+[ $# -ge 3 ]		|| man
+[ -f "$3" ]		|| err 'main file not found'
+
+#!/srv/omp
+job -q 'epyc' -l 'nodes=1:ppn=16'
+
+#!/job/omp
+EXE="$TMP/exe"
+gcc -fopenmp "$3" -o "$EXE"
+OMP_NUM_THREADS='8' "$EXE" "${@:4}"
