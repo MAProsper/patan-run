@@ -6,7 +6,7 @@
 # 	tester		Adrián Masiá Moreno		(al386159@uji.es)
 # 	tester		Adrián Luque Bueso		(al387532@uji.es)
 # 	license		BSD 3-Clause
-# 	version		8.0.0
+# 	version		8.1.0
 
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S)}"
@@ -100,13 +100,15 @@ uniq "$PBS_NODEFILE" >"$NODE"; mpicc "$3" -o "$EXE"
 mpirun -mca 'btl_tcp_if_include' 'eth0' -np "$4" -machinefile "$NODE" "$EXE" "${@:5}"
 
 #!/man/omp
-# main [args...]
+# main threads [args...]
 # 	main	main.c	(main file's relative path)
+# 	threads	16	(number of threads to utilize)
 # 	args	...	(program arguments)
 
 #!/usr/omp
-[ $# -ge 3 ]		|| man
+[ $# -ge 4 ]		|| man
 [ -f "$3" ]		|| err 'main file not found'
+[[ "$4" =~ ^[0-9]+$ ]]	|| err 'threads must be positive integer'
 
 #!/srv/omp
 job -q 'epyc' -l 'nodes=1:ppn=16'
@@ -114,7 +116,7 @@ job -q 'epyc' -l 'nodes=1:ppn=16'
 #!/job/omp
 EXE="$TMP/exe"
 gcc -fopenmp "$3" -o "$EXE"
-OMP_NUM_THREADS='8' "$EXE" "${@:4}"
+OMP_NUM_THREADS="$4" "$EXE" "${@:5}"
 
 #!/srv/cuda
 job -q 'cuda' -l 'nodes=cuda:ppn=1'
