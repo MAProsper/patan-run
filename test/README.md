@@ -18,3 +18,9 @@ Writes `1` to console (as many as threads), user writes `2`, writes `2` to the c
 ```bash
 patan-run omp omp.c 1
 ```
+
+## CUDA
+Writes usage information to console.
+```bash
+patan-run cuda -h
+```

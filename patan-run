@@ -6,7 +6,7 @@
 # 	tester		Adrián Masiá Moreno		(al386159@uji.es)
 # 	tester		Adrián Luque Bueso		(al387532@uji.es)
 # 	license		BSD 3-Clause
-# 	version		7.0.0
+# 	version		8.0.0
 
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S)}"
@@ -115,3 +115,9 @@ job -q 'epyc' -l 'nodes=1:ppn=16'
 EXE="$TMP/exe"
 gcc -fopenmp "$3" -o "$EXE"
 OMP_NUM_THREADS='8' "$EXE" "${@:4}"
+
+#!/srv/cuda
+job -q 'cuda' -l 'nodes=cuda:ppn=1'
+
+#!/job/cuda
+nvidia-smi "${@:3}"
