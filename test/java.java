@@ -1,6 +1,6 @@
 import javax.swing.*;
 
-class Main {
+class Java {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             var container = new JFrame("Window");
