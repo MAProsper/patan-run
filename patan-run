@@ -6,7 +6,7 @@
 # 	tester		Adrián Masiá Moreno		(al386159@uji.es)
 # 	tester		Adrián Luque Bueso		(al387532@uji.es)
 # 	license		BSD 3-Clause
-# 	version		8.1.0
+# 	version		8.2.0
 
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S)}"
@@ -95,9 +95,10 @@ java -cp "$TMP" "${@:3}"
 job -q 'bi' -l "nodes=$4:ppn=4"
 
 #!/job/mpi
+PATH="/opt/mpich2/gnu/bin:/usr/sbin/:$PATH"
 EXE="$TMP/exe"; NODE="$TMP/node"
 uniq "$PBS_NODEFILE" >"$NODE"; mpicc "$3" -o "$EXE"
-mpirun -mca 'btl_tcp_if_include' 'eth0' -np "$4" -machinefile "$NODE" "$EXE" "${@:5}"
+mpirun -np "$4" -machinefile "$NODE" "$EXE" "${@:5}"
 
 #!/man/omp
 # main threads [args...]
@@ -114,12 +115,25 @@ mpirun -mca 'btl_tcp_if_include' 'eth0' -np "$4" -machinefile "$NODE" "$EXE" "${
 job -q 'epyc' -l 'nodes=1:ppn=16'
 
 #!/job/omp
+PATH="/usr/sbin/:$PATH"
 EXE="$TMP/exe"
 gcc -fopenmp "$3" -o "$EXE"
 OMP_NUM_THREADS="$4" "$EXE" "${@:5}"
 
+#!/man/cuda
+# main [args...]
+# 	main	main.c	(main file's relative path)
+# 	args	...	(program arguments)
+
+#!/usr/cuda
+[ $# -ge 3 ]		|| man
+[ -f "$3" ]		|| err 'main file not found'
+
 #!/srv/cuda
-job -q 'cuda' -l 'nodes=cuda:ppn=1'
+job -q 'cuda' -l 'nodes=cuda:ppn=16'
 
 #!/job/cuda
-nvidia-smi "${@:3}"
+PATH="/state/partition1/soft/cuda-10.0/bin:$PATH"
+EXE="$TMP/exe"
+nvcc "$3" -o "$EXE"
+"$EXE" "${@:4}"

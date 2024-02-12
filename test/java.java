@@ -1,18 +1,67 @@
 import javax.swing.*;
+import java.lang.Thread;
+import java.util.Scanner;
+import java.util.concurrent.*;
 
 class Java {
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            var container = new JFrame("Window");
-            container.add(new JTextField("Wait for console"));
-            container.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            container.setVisible(true);
-        });
+	static class Loop implements Runnable {
+		int n = -1;
 
-        new Thread(() -> {
-            try { Thread.sleep(5000L); }
-            catch (InterruptedException ignored) {}
-            System.out.println(args.length == 1 ? Integer.parseInt(args[0]) : -1);
-        }).start();
-    }
+		public Loop(int n) {
+			this.n = n;
+		}
+
+		public void run() {
+			var id = Thread.currentThread().getId();
+			trySleep(500L);
+			System.out.printf("T%d = %d\n", id, n);
+			trySleep(500L);
+		}
+
+		boolean trySleep(long millis) {
+			try {
+				Thread.sleep(500L);
+			} catch (InterruptedException e) {
+				return false;
+			};
+			return true;
+		}
+	}
+	
+	static void shutdown(ExecutorService executor) {
+		executor.shutdown();
+		while (true) {
+			try {
+		  	if (executor.awaitTermination(1L, TimeUnit.SECONDS)) break;
+		  } catch (InterruptedException e) {};
+		}
+	}
+
+	public static void main(String[] args) {
+		int threads, n, i;
+		ExecutorService executor;
+
+		SwingUtilities.invokeLater(() -> {
+			var container = new JFrame("Window");
+			container.add(new JTextField("Wait for console"));
+			container.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			container.setVisible(true);
+			container.pack();
+		});
+
+		threads = 4;
+		var scanner = new Scanner(System.in);
+
+		n = -1;
+		executor = Executors.newFixedThreadPool(threads);
+		if (args.length == 1) n = Integer.parseInt(args[0]); System.out.printf("n = %d\n", n);
+		for (i = 0; i < threads; i++) executor.execute(new Loop(n));
+		Java.shutdown(executor);
+
+		n = -1;
+		executor = Executors.newFixedThreadPool(threads);
+		System.out.printf("n = "); System.out.flush(); n = scanner.nextInt();
+		for (i = 0; i < threads; i++) executor.execute(new Loop(n));
+		Java.shutdown(executor);
+	}
 }

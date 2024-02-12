@@ -12,6 +12,8 @@ int main(int argc, char* argv[]) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &id);
 	MPI_Comm_size(MPI_COMM_WORLD, &nodes);
 
+	MPI_Barrier(MPI_COMM_WORLD);
+
 	n = -1;
 	if (id == 0) {
 		if (argc == 2) n = atoi(argv[1]); printf("n = %d\n", n);
@@ -19,7 +21,7 @@ int main(int argc, char* argv[]) {
 	} else {
 		MPI_Recv(&n, 1, MPI_INT, 0, MPI_TAG, MPI_COMM_WORLD, &s);
 	}
-	printf("P%d = %d\n", id, n);
+	printf("R%d = %d\n", id, n);
 
 	MPI_Barrier(MPI_COMM_WORLD);
 
@@ -30,8 +32,10 @@ int main(int argc, char* argv[]) {
 	} else {
 		MPI_Recv(&n, 1, MPI_INT, 0, MPI_TAG, MPI_COMM_WORLD, &s);
 	}
-	printf("P%d = %d\n", id, n);
+	printf("R%d = %d\n", id, n);
 	
+	MPI_Barrier(MPI_COMM_WORLD);
+
 	MPI_Finalize();
 	return 0;
 }
