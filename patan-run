@@ -122,7 +122,7 @@ OMP_NUM_THREADS="$4" "$EXE" "${@:5}"
 
 #!/man/cuda
 # main [args...]
-# 	main	main.c	(main file's relative path)
+# 	main	main.cu	(main file's relative path)
 # 	args	...	(program arguments)
 
 #!/usr/cuda
