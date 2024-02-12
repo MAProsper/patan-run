@@ -6,7 +6,7 @@
 # 	tester		Adrián Masiá Moreno		(al386159@uji.es)
 # 	tester		Adrián Luque Bueso		(al387532@uji.es)
 # 	license		BSD 3-Clause
-# 	version		8.2.0
+# 	version		8.2.1
 
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S)}"
@@ -49,7 +49,7 @@ cd "$RWD"; QSUB="qsub -${DISPLAY+X}Ix $PWD/$JOB"; LOG="$TMP/log"
 job() { info "$VAR" &>"$LOG"; script -qac "$QSUB $(arg "$@")" "$LOG"; }
 
 #!/job/patan-run
-cd "$PBS_O_WORKDIR"; trap 'info "exit code $?"' EXIT
+cd "$PBS_O_WORKDIR"; trap 'info "exit code $?"; sleep 0.033' EXIT
 
 #!/usr/install
 rmc; echo "$RC" >>"$ENV"; cpx "$EXE"; ret
