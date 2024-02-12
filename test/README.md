@@ -22,5 +22,5 @@ patan-run omp omp.c 2 1
 ## CUDA
 Writes `1` to console (as many as kernel), user writes `2`, writes `2` to the console (as many as kernel).
 ```bash
-patan-run cuda 1
+patan-run cuda cuda.cu 1
 ```
