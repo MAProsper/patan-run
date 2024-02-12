@@ -49,7 +49,7 @@ class Java {
 			container.pack();
 		});
 
-		threads = 4;
+		threads = 2;
 		var scanner = new Scanner(System.in);
 
 		n = -1;
