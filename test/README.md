@@ -1,5 +1,5 @@
 # Tests
-Must be executed manually with valid account on target server.
+Must execute manually with valid account in target server.
 
 ## Java
 ```bash
