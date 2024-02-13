@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.lang.Thread;
 import java.util.Scanner;
+import java.awt.Dimension;
 import java.util.concurrent.*;
 
 class Java {
@@ -42,11 +43,14 @@ class Java {
 		ExecutorService executor;
 
 		SwingUtilities.invokeLater(() -> {
-			var container = new JFrame("Window");
-			container.add(new JTextField("Wait for terminal"));
-			container.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			container.setVisible(true);
-			container.pack();
+			var frame = new JFrame("patan-run");
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setMinimumSize(new Dimension(256, 144));
+			var text = new JTextField("Wait for terminal");
+			text.setHorizontalAlignment(JTextField.CENTER);
+			frame.add(text);
+			frame.pack();
+			frame.setVisible(true);
 		});
 
 		threads = 2;
