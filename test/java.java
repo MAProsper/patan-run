@@ -32,8 +32,8 @@ class Java {
 		executor.shutdown();
 		while (true) {
 			try {
-		  	if (executor.awaitTermination(1L, TimeUnit.SECONDS)) break;
-		  } catch (InterruptedException e) {};
+				if (executor.awaitTermination(1L, TimeUnit.SECONDS)) break;
+			} catch (InterruptedException e) {};
 		}
 	}
 
