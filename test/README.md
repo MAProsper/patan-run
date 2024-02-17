@@ -1,8 +1,25 @@
 # Tests
 Must execute manually with valid account in target server.
 
+## Patan-run
+**Important**: Modifies software installation.
+Replace path and user appropriately.
+```sh
+bash -i install ../patan-run alXXXXXX
+```
+- System writes `1` to terminal.
+- System writes `0` to terminal.
+- System writes `1` to terminal.
+- System writes `0` to terminal.
+---
+```sh
+patan-run report version
+```
+- System creates `patan-run-XXXXXX` report file.
+- System writes version to terminal.
+
 ## Java
-```bash
+```sh
 patan-run java Java 1
 ```
 - System shows window.
@@ -12,7 +29,7 @@ patan-run java Java 1
 - User closes window.
 
 ## MPI
-```bash
+```sh
 patan-run mpi mpi.c 2 1
 ```
 - System writes `1` to terminal (2 times).
@@ -20,7 +37,7 @@ patan-run mpi mpi.c 2 1
 - System writes `2` to terminal (2 times).
 
 ## OMP
-```bash
+```sh
 patan-run omp omp.c 2 1
 ```
 - System writes `1` to terminal (2 times).
@@ -28,7 +45,7 @@ patan-run omp omp.c 2 1
 - System writes `2` to terminal (2 times).
 
 ## CUDA
-```bash
+```sh
 patan-run cuda cuda.cu 1
 ```
 - System writes `1` to terminal (4 times).

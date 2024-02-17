@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 # easy remote execution of projects in patan.act.uji.es
 # 	source		https://github.com/MAProsper/patan-run
 # 	developer	Miguel Ángel Prosper Quíros	(al386125@uji.es)
@@ -6,47 +6,38 @@
 # 	tester		Adrián Masiá Moreno		(al386159@uji.es)
 # 	tester		Adrián Luque Bueso		(al387532@uji.es)
 # 	license		BSD 3-Clause
-# 	version		8.2.2
-
+# 	version		9.0.0
+log() { info "$VAR" &>"$LOG"; script -qac "$(arg "$@")" "$LOG"; }; set -e
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
-NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S)}"
-TYPE="$2"; VAR="$(arg "$@")"; TMP=".$NAME-$ID"; JOB="$TMP/$TYPE"
+NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S-$$)}"
+TYPE="$2"; TMP=".$NAME-$ID"; JOB="$TMP/$NAME"; LOG="$TMP/log"; VAR="$(arg "$@")"
 
-#!/man/patan-run
+#!/usr/patan-run
 # user type [args...]	(cd to project's root first)
 # 	user	al386125	(skip username if installed)
 # 	type	java, ...	(type of action or project)
 # 	args	...		(type specific arguments)
-
-#!/usr/patan-run
-SERVER="$1@patan.act.uji.es"; PROXY="${PROXY-$1}@lynx.uji.es"
 ENV="${ENV-$HOME/.${SHELL##*/}rc}"; EXE="$HOME/.local/bin/$NAME"; SCP="$HOME/.ssh/$NAME"
-OPT="-o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa -o PreferredAuthentications=password"
-SSH="ssh $OPT -o ControlPersist=${TMOUT=256} -${DISPLAY+Y}S $SCP -J $PROXY $SERVER"; RC="alias '$NAME=$(arg "$EXE")$1'"
-exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'bin' 'bash'; tuc "$1" "$NAME"; tuc "$1"; }
-rmc() { [ -f "$ENV" ] && grep -vw "^${RC%%=*}" <<<"$(<"$ENV")" >"$ENV" || :; }
+DST="$1@patan.act.uji.es"; JUMP="${PROXY-$1}@lynx.uji.es"; RC="alias $NAME=$(arg "$(arg "$EXE" "$1")")"
+OPT="-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa -oPreferredAuthentications=password"
+SSH="ssh $OPT -oControlMaster=auto -oControlPersist=${TMOUT=256} -q${DISPLAY+Y}S $SCP -J $JUMP $DST"
+man() { err "$(tuc "$2" "$1" | sed -n '/^#!/d;/^# /!q;s///;p')"; }; ret() { err 'restart terminal'; }
+job() { PREV=$($SSH "mkdir -p $HIST; ls \$_ | tail -1"); info "$PWD"; cpx "$JOB"; exe 'job' >"$_"
+rsync -ae "$SSH" --link-dest="../$PREV" './' ":$RWD"; $SSH -t "$(exe srv); $(arg 'job' "$@")"; }
+exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'usr' 'bin'; tuc "$1" "$NAME"; tuc "$@"; }
+rmc() { [ -f "$ENV" ] && grep -v "^${RC%%=*}=" <<<"$(<"$ENV")" >"$ENV" || :; }
+tuc() { awk "/^#!/{r=0}\$1~/#!\/${1:-usr}\/${2:-$TYPE}/{r=1}r" "$0"; }
 cpx() { mkdir -p "${1%/*}"; [ "$0" -ef "$1" ] || install "$0" "$1"; }
-tuc() { awk "/^#!/{r=0}\$1~/#!\/$1\/${2:-$TYPE}/{r=1}r" "$0"; }
-man() { err "$(tuc "${2-man}" "$1" | sed -n 's/# //p')"; }
-ret() { err 'restart terminal to finish'; }
 
-# validate arguments
+# main fragment
 [ "$BASH_SOURCE" = "$0" ]	|| err 'must execute directly locally'
 [ $# -ge 2 ]			|| man "$NAME"
 [[ "$1" =~ ^[a-z0-9]+$ ]]	|| err 'username not valid'
-[ "$(tuc usr; tuc srv)" ]	|| err 'type not supported'
-
-# main fragment
-. '/dev/stdin' <<<"$(tuc usr)"
-trap 'rm -r "$TMP"' EXIT; cpx "$JOB"; exe 'job' >"$_"
-$SSH -O 'check' &>'/dev/null' || { rm -f "$SCP"; MCP='-M'; }
-info "$PWD"; PREV=$($SSH "$MCP" "mkdir -p $RWD; ls \$_/.. | sed 'x;\$!d'")
-info 'transferring workspace'; rsync -ae "$SSH" --link-dest="../$PREV" './' ":$RWD"
-$SSH -qt "$(exe srv)"; exit
+[ "$(tuc)" ]			|| err 'type not supported'
+trap 'rm -rf "$TMP"' EXIT; eval "$(tuc)"; exit
 
 #!/srv/patan-run
-cd "$RWD"; QSUB="qsub -${DISPLAY+X}Ix $PWD/$JOB"; LOG="$TMP/log"
-job() { info "$VAR" &>"$LOG"; script -qac "$QSUB $(arg "$@")" "$LOG"; }
+cd "$RWD"; job() { log 'qsub' "-${DISPLAY+X}Ix" "$@" "$PWD/$JOB"; }
 
 #!/job/patan-run
 cd "$PBS_O_WORKDIR"; trap 'info "exit code $?"; sleep 0.033' EXIT
@@ -58,79 +49,58 @@ rmc; echo "$RC" >>"$ENV"; cpx "$EXE"; ret
 rmc; rm "$0"; ret
 
 #!/usr/version
-man 'bash' 'bin'
+man 'bin' 'usr'
 
-#!/srv/ssh
-[ $# -ge 3 ]	|| "$SHELL"
-[ $# -ge 3 ]	&& "$SHELL" -c "$(arg "${@:3}")"
+#!/usr/report
+ARC="${TMP#.}.tgz"; info "$ARC"
+cpx "$JOB"; { uname -a; env; cat "$ENV"; } >"$TMP/env"
+log "${@::2}" "${@:3}"; tar -czf "$ARC" './' &>'/dev/null'
 
-#!/man/java
+#!/usr/java
 # main [args...]
 # 	main	package.class	(main method's class name)
 # 	args	...		(program arguments)
-
-#!/usr/java
 [ $# -ge 3 ]	|| man
 [ "$3" ]	|| err 'main class cannot be empty'
-
-#!/srv/java
 job -q 'epyc' -l 'nodes=1:ppn=16'
 
 #!/job/java
-find '.' -name '*.java' -exec javac -encoding 'UTF-8' -d "$TMP" '{}' '+'
-java -cp "$TMP" "${@:3}"
+find -name '*.java' -exec javac -encoding 'UTF-8' -d "$TMP" '{}' '+'; java -cp "$TMP" "${@:3}"
 
-#!/man/mpi
+#!/usr/mpi
 # main nodes [args...]
 # 	main	main.c	(main file's relative path)
 # 	nodes	16	(number of nodes to utilize)
 # 	args	...	(program arguments)
-
-#!/usr/mpi
 [ $# -ge 4 ]		|| man
 [ -f "$3" ]		|| err 'main file not found'
 [[ "$4" =~ ^[0-9]+$ ]]	|| err 'nodes must be positive integer'
-
-#!/srv/mpi
 job -q 'bi' -l "nodes=$4:ppn=4"
 
 #!/job/mpi
-EXE="$TMP/exe"; NODE="$TMP/node"
-uniq "$PBS_NODEFILE" >"$NODE"; mpicc "$3" -o "$EXE"
-mpirun -np "$4" -machinefile "$NODE" "$EXE" "${@:5}"
+NODE="$TMP/node"; uniq "$PBS_NODEFILE" >"$NODE"
+mpicc "$3" -o "$JOB"; mpirun -np "$4" -machinefile "$NODE" "$_" "${@:5}"
 
-#!/man/omp
+#!/usr/omp
 # main threads [args...]
 # 	main	main.c	(main file's relative path)
 # 	threads	16	(number of threads to utilize)
 # 	args	...	(program arguments)
-
-#!/usr/omp
 [ $# -ge 4 ]		|| man
 [ -f "$3" ]		|| err 'main file not found'
 [[ "$4" =~ ^[0-9]+$ ]]	|| err 'threads must be positive integer'
-
-#!/srv/omp
 job -q 'epyc' -l 'nodes=1:ppn=16'
 
 #!/job/omp
-EXE="$TMP/exe"
-gcc -fopenmp "$3" -o "$EXE"
-OMP_NUM_THREADS="$4" "$EXE" "${@:5}"
+gcc -fopenmp "$3" -o "$JOB"; OMP_NUM_THREADS="$4" "$_" "${@:5}"
 
-#!/man/cuda
+#!/usr/cuda
 # main [args...]
 # 	main	main.cu	(main file's relative path)
 # 	args	...	(program arguments)
-
-#!/usr/cuda
 [ $# -ge 3 ]		|| man
 [ -f "$3" ]		|| err 'main file not found'
-
-#!/srv/cuda
 job -q 'cuda' -l 'nodes=cuda:ppn=16'
 
 #!/job/cuda
-EXE="$TMP/exe"
-nvcc "$3" -o "$EXE"
-"$EXE" "${@:4}"
+nvcc --gpu-architecture='compute_61' "$3" -o "$JOB"; "$_" "${@:4}"
