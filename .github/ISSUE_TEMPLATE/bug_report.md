@@ -24,7 +24,7 @@ A clear and concise description of what you expected to happen.
 Add screenshots to help explain your problem.
 
 **Environment**
-Run the same command prefixed with report and attach the generated file.
+Run the same command prefixed with `report` and attach the generated file.
 ```
 patan-run report [java|...] [args...]
 ```
