@@ -12,22 +12,22 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+1. Have this '...'
+2. Run this '....'
+3. Press this '....'
 4. See error
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+Add screenshots to help explain your problem.
 
-**Environment (please complete the following information):**
- - OS version: [e.g. Ubuntu 21.04]
- - Software version: [e.g. patan-run 6.1.0]
- - Shell configuration: [e.g. contents of `~/.bashrc`]
- - Terminal output: [e.g. execution trace]
+**Environment**
+Run the same command prefixed with report and attach the generated file.
+```
+patan-run report [java|...] [args...]
+```
 
 **Additional context**
 Add any other context about the problem here.
