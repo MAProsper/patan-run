@@ -98,8 +98,8 @@ gcc -fopenmp "$3" -o "$JOB"; OMP_NUM_THREADS="$4" "$_" "${@:5}"
 # main [args...]
 # 	main	main.cu	(main file's relative path)
 # 	args	...	(program arguments)
-[ $# -ge 3 ]		|| man
-[ -f "$3" ]		|| err 'main file not found'
+[ $# -ge 3 ]	|| man
+[ -f "$3" ]	|| err 'main file not found'
 job -q 'cuda' -l 'nodes=cuda:ppn=16'
 
 #!/job/cuda
