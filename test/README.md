@@ -1,9 +1,8 @@
 # Tests
 Must set working directory to `test` and execute manually with valid account in target server.
 
-## Patan-run
-**Important**: Modifies software installation.
-Replace path and user appropriately.
+## patan-run
+**Important**: Modifies software installation. Replace path and user appropriately.
 ```sh
 bash -i ./install ../patan-run alXXXXXX
 ```
