@@ -5,5 +5,5 @@ job
 
 #!/job/custom
 info "$@"
-IFS='' read -r 'line'
+IFS='' read -rp 'n = ' 'line'
 info "$line"
