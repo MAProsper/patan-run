@@ -50,3 +50,11 @@ patan-run cuda cuda.cu 1
 - System writes `1` to terminal (4 times).
 - User writes `2` to terminal.
 - System writes `2` to terminal (4 times).
+
+## Custom
+```sh
+SRC=./custom.sh patan-run custom 1
+```
+- System writes `1` to terminal.
+- User writes `2` to terminal.
+- System writes `2` to terminal.
