@@ -6,7 +6,7 @@
 # 	tester		Adrián Masiá Moreno		(al386159@uji.es)
 # 	tester		Adrián Luque Bueso		(al387532@uji.es)
 # 	license		BSD 3-Clause
-# 	version		9.0.0
+# 	version		10.0.0
 log() { info "$VAR" &>"$LOG"; script -qac "$(arg "$@")" "$LOG"; }; set -e
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S-$$)}"
@@ -25,8 +25,8 @@ man() { err "$(tuc "$2" "$1" | sed -n '/^#!/d;/^# /!q;s///;p')"; }; ret() { err 
 job() { PREV=$($SSH "mkdir -p $HIST; ls \$_ | tail -1"); info "$PWD"; cpx "$JOB"; exe 'job' >"$_"
 rsync -ae "$SSH" --link-dest="../$PREV" './' ":$RWD"; $SSH -t "$(exe srv); $(arg 'job' "$@")"; }
 exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'usr' 'bin'; tuc "$1" "$NAME"; tuc "$@"; }
+tuc() { awk "/^#!/{r=0}\$1~/#!\/${1:-usr}\/${2:-$TYPE}/{r=1}r" "$0" "${SRC:-/dev/null}"; }
 rmc() { [ -f "$ENV" ] && grep -v "^${RC%%=*}=" <<<"$(<"$ENV")" >"$ENV" || :; }
-tuc() { awk "/^#!/{r=0}\$1~/#!\/${1:-usr}\/${2:-$TYPE}/{r=1}r" "$0"; }
 cpx() { mkdir -p "${1%/*}"; [ "$0" -ef "$1" ] || install "$0" "$1"; }
 
 # main fragment
