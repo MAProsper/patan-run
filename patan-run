@@ -10,7 +10,7 @@
 log() { info "$VAR" &>"$LOG"; script -qac "$(arg "$@")" "$LOG"; }; set -e
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S-$$)}"
-TYPE="$2"; TMP=".$NAME-$ID"; JOB="$TMP/$NAME"; LOG="$TMP/log"; VAR="$(arg "$@")"
+TYPE="$2"; VAR="$(arg "$@")"; TMP=".$NAME-$ID"; JOB="$TMP/$NAME"; LOG="$TMP/log"
 
 #!/usr/patan-run
 # user type [args...]	(cd to project's root first)
@@ -22,11 +22,9 @@ DST="$1@patan.act.uji.es"; JUMP="${PROXY-$1}@lynx.uji.es"; RC="alias $NAME=$(arg
 OPT="-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa -oPreferredAuthentications=password"
 SSH="ssh $OPT -oControlMaster=auto -oControlPersist=${TMOUT=256} -q${DISPLAY+Y}S $SCP -J $JUMP $DST"
 man() { err "$(tuc "$2" "$1" | sed -n '/^#!/d;/^# /!q;s///;p')"; }; ret() { err 'restart terminal'; }
-job() { PREV=$($SSH "mkdir -p $HIST; ls \$_ | tail -1"); info "$PWD"; cpx "$JOB"; exe 'job' >"$_"
-rsync -ae "$SSH" --link-dest="../$PREV" './' ":$RWD"; $SSH -t "$(exe srv); $(arg 'job' "$@")"; }
-exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'usr' 'bin'; tuc "$1" "$NAME"; tuc "$@"; }
-tuc() { awk "/^#!/{r=0}\$1~/#!\/${1:-usr}\/${2:-$TYPE}/{r=1}r" "$0" "${SRC-/dev/null}"; }
+exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'usr' 'bin'; tuc "$1" "patan-run"; tuc "$@"; }
 rmc() { [ -f "$ENV" ] && grep -v "^${RC%%=*}=" <<<"$(<"$ENV")" >"$ENV" || :; }
+tuc() { awk "/^#!/{r=0}\$1~/#!\/${1:-usr}\/${2:-$TYPE}/{r=1}r" "$0"; }
 cpx() { mkdir -p "${1%/*}"; [ "$0" -ef "$1" ] || install "$0" "$1"; }
 
 # main fragment
@@ -34,10 +32,13 @@ cpx() { mkdir -p "${1%/*}"; [ "$0" -ef "$1" ] || install "$0" "$1"; }
 [ $# -ge 2 ]			|| man "$NAME"
 [[ "$1" =~ ^[a-z0-9]+$ ]]	|| err 'username not valid'
 [ "$(tuc)" ]			|| err 'type not supported'
-trap 'rm -rf "$TMP"' EXIT; eval "$(tuc)"; exit
+trap 'rm -rf "$TMP"' EXIT; cpx "$JOB"; exe 'job' >"$_"; eval "$(tuc)"
+PREV=$($SSH "mkdir -p $HIST; ls \$_ | tail -1"); info "transferring $PWD"
+rsync -ae "$SSH" --link-dest="../$PREV" './' ":$RWD"; $SSH -t "$(exe srv)"; exit
 
 #!/srv/patan-run
-cd "$RWD"; job() { log 'qsub' "-${DISPLAY+X}Ix" "$@" "$PWD/$JOB"; }
+job() { log qsub -${DISPLAY+X}Ix "$@" "$PWD/$JOB"; }
+cd "$RWD"; eval job $(sed 's/#PBS //p;d' "$JOB")
 
 #!/job/patan-run
 cd "$PBS_O_WORKDIR"; trap 'info "exit code $?"; sleep 0.033' EXIT
@@ -52,9 +53,16 @@ rmc; rm "$0"; ret
 man 'bin' 'usr'
 
 #!/usr/report
-ARC="${TMP#.}.tgz"; info "$ARC"
-cpx "$JOB"; { uname -a; env; cat "$ENV"; } >"$TMP/env"
-log "${@::2}" "${@:3}"; tar -czf "$ARC" './' &>'/dev/null'
+ARC="${TMP#.}.tgz"; cpx "$JOB"; { uname -a; env; cat "$ENV"; } >"$TMP/env"
+log "${@::2}" "${@:3}"; tar -czf "$ARC" './' &>'/dev/null'; err "$ARC"
+
+#!/usr/pbs
+# job [args...]
+# 	job	main.pbs	(job file's relative path)
+# 	args	...		(program arguments)
+[ $# -ge 3 ]		|| man
+[ -f "$3" ]		|| err 'job file not found'
+cat "$3" >>"$JOB"
 
 #!/usr/java
 # main [args...]
@@ -62,9 +70,9 @@ log "${@::2}" "${@:3}"; tar -czf "$ARC" './' &>'/dev/null'
 # 	args	...		(program arguments)
 [ $# -ge 3 ]	|| man
 [ "$3" ]	|| err 'main class cannot be empty'
-job -q 'epyc' -l 'nodes=1:ppn=16'
 
 #!/job/java
+#PBS -q epyc -l nodes=1:ppn=16
 find -name '*.java' -exec javac -encoding 'UTF-8' -d "$TMP" '{}' '+'; java -cp "$TMP" "${@:3}"
 
 #!/usr/mpi
@@ -75,9 +83,9 @@ find -name '*.java' -exec javac -encoding 'UTF-8' -d "$TMP" '{}' '+'; java -cp "
 [ $# -ge 4 ]		|| man
 [ -f "$3" ]		|| err 'main file not found'
 [[ "$4" =~ ^[0-9]+$ ]]	|| err 'nodes must be positive integer'
-job -q 'bi' -l "nodes=$4:ppn=4"
 
 #!/job/mpi
+#PBS -q bi -l nodes=$4:ppn=4
 NODE="$TMP/node"; uniq "$PBS_NODEFILE" >"$NODE"
 mpicc "$3" -o "$JOB"; mpirun -np "$4" -machinefile "$NODE" "$_" "${@:5}"
 
@@ -89,9 +97,9 @@ mpicc "$3" -o "$JOB"; mpirun -np "$4" -machinefile "$NODE" "$_" "${@:5}"
 [ $# -ge 4 ]		|| man
 [ -f "$3" ]		|| err 'main file not found'
 [[ "$4" =~ ^[0-9]+$ ]]	|| err 'threads must be positive integer'
-job -q 'epyc' -l 'nodes=1:ppn=16'
 
 #!/job/omp
+#PBS -q epyc -l nodes=1:ppn=16
 gcc -fopenmp "$3" -o "$JOB"; OMP_NUM_THREADS="$4" "$_" "${@:5}"
 
 #!/usr/cuda
@@ -100,7 +108,7 @@ gcc -fopenmp "$3" -o "$JOB"; OMP_NUM_THREADS="$4" "$_" "${@:5}"
 # 	args	...	(program arguments)
 [ $# -ge 3 ]	|| man
 [ -f "$3" ]	|| err 'main file not found'
-job -q 'cuda' -l 'nodes=cuda:ppn=16'
 
 #!/job/cuda
+#PBS -q cuda -l nodes=cuda:ppn=16
 nvcc --gpu-architecture='compute_61' "$3" -o "$JOB"; "$_" "${@:4}"

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#PBS -N patan-test
+#PBS -l nice=$4
+echo "$PBS_JOBNAME:$(nice)"
+echo "n = $4"
+IFS='' read -rp 'n = ' n
+echo "n = $n"

@@ -1,5 +1,6 @@
 # Tests
 Must set working directory to `test` and execute manually with valid account in target server.
+Prefix all commands with `HIST=.cache/patan-test` to isolate execution.
 
 ## patan-run
 **Important**: Modifies software installation. Replace path and user appropriately.
@@ -51,10 +52,11 @@ patan-run cuda cuda.cu 1
 - User writes `2` to terminal.
 - System writes `2` to terminal (4 times).
 
-## Custom
+## PBS
 ```sh
-SRC=./custom.sh patan-run custom 1
+patan-run pbs pbs.pbs 1
 ```
+- System writes `patan-test:1` to terminal.
 - System writes `1` to terminal.
 - User writes `2` to terminal.
 - System writes `2` to terminal.
