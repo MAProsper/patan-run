@@ -43,6 +43,10 @@ cd "$RWD"; eval job $(sed 's/#PBS //p;d' "$JOB")
 #!/job/patan-run
 cd "$RWD"; trap 'info "exit code $?"; sleep 0.033' EXIT
 
+#!/usr/report
+ARC="${TMP#.}.tgz"; cpx "$JOB"; { uname -a; env; cat "$ENV"; } >"$TMP/env"
+log "${@::2}" "${@:3}"; info "$ARC"; tar -czf "$ARC" './' &>'/dev/null'
+
 #!/usr/install
 rmc; echo "$RC" >>"$ENV"; cpx "$EXE"; ret
 
@@ -51,10 +55,6 @@ rmc; rm "$0"; ret
 
 #!/usr/version
 man 'bin' 'usr'
-
-#!/usr/report
-ARC="${TMP#.}.tgz"; cpx "$JOB"; { uname -a; env; cat "$ENV"; } >"$TMP/env"
-log "${@::2}" "${@:3}"; info "$ARC"; tar -czf "$ARC" './' &>'/dev/null'
 
 #!/usr/pbs
 # job [args...]
