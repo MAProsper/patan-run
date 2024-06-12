@@ -10,19 +10,19 @@
 log() { info "$VAR" &>"$LOG"; script -qac "$(arg "$@")" "$LOG"; }; set -e
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S-$$)}"
-TYPE="$2"; VAR="$(arg "$@")"; TMP=".$NAME-$ID"; JOB="$TMP/$NAME"; LOG="$TMP/log"
+TYPE="$2"; VAR=$(arg "$@"); TMP=".$NAME-$ID"; JOB="$TMP/$NAME"; LOG="$TMP/log"
 
 #!/usr/patan-run
 # user type [args...]	(cd to project's root first)
 # 	user	al386125	(skip username if installed)
 # 	type	java, ...	(type of action or project)
 # 	args	...		(type specific arguments)
-ENV="${ENV-$HOME/.${SHELL##*/}rc}"; EXE="$HOME/.local/bin/$NAME"; SCP="$HOME/.ssh/$NAME"
+EXE="$HOME/.local/bin/$NAME"; SCP="$HOME/.ssh/$NAME";: "${ENV=$HOME/.${SHELL##*/}rc}"
 DST="$1@patan.act.uji.es"; JUMP="${PROXY-$1}@lynx.uji.es"; RC="alias $NAME=$(arg "$(arg "$EXE" "$1")")"
 OPT="-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa -oPreferredAuthentications=password"
 SSH="ssh $OPT -oControlMaster=auto -oControlPersist=${TMOUT=256} -q${DISPLAY+Y}S $SCP -J $JUMP $DST"
 man() { err "$(tuc "$2" "$1" | sed -n '/^#!/d;/^# /!q;s///;p')"; }; ret() { err 'restart terminal'; }
-exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'usr' 'bin'; tuc "$1" "patan-run"; tuc "$@"; }
+exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'usr' 'bin'; tuc "$1" "$NAME"; tuc "$@"; }
 rmc() { [ -f "$ENV" ] && grep -v "^${RC%%=*}=" <<<"$(<"$ENV")" >"$ENV" || :; }
 tuc() { awk "/^#!/{r=0}\$1~/#!\/${1:-usr}\/${2:-$TYPE}/{r=1}r" "$0"; }
 cpx() { mkdir -p "${1%/*}"; [ "$0" -ef "$1" ] || install "$0" "$1"; }
@@ -41,7 +41,7 @@ job() { log qsub -${DISPLAY+X}Ix "$@" "$PWD/$JOB"; }
 cd "$RWD"; eval job $(sed 's/#PBS //p;d' "$JOB")
 
 #!/job/patan-run
-cd "$PBS_O_WORKDIR"; trap 'info "exit code $?"; sleep 0.033' EXIT
+cd "$RWD"; trap 'info "exit code $?"; sleep 0.033' EXIT
 
 #!/usr/install
 rmc; echo "$RC" >>"$ENV"; cpx "$EXE"; ret
