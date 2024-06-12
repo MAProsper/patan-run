@@ -54,7 +54,7 @@ man 'bin' 'usr'
 
 #!/usr/report
 ARC="${TMP#.}.tgz"; cpx "$JOB"; { uname -a; env; cat "$ENV"; } >"$TMP/env"
-log "${@::2}" "${@:3}"; tar -czf "$ARC" './' &>'/dev/null'; err "$ARC"
+log "${@::2}" "${@:3}"; info "$ARC"; tar -czf "$ARC" './' &>'/dev/null'
 
 #!/usr/pbs
 # job [args...]
