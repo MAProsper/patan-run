@@ -28,7 +28,7 @@ class Java {
 			return true;
 		}
 	}
-	
+
 	static void shutdown(ExecutorService executor) {
 		executor.shutdown();
 		while (true) {
@@ -43,7 +43,7 @@ class Java {
 		ExecutorService executor;
 
 		SwingUtilities.invokeLater(() -> {
-			var frame = new JFrame("patan-java");
+			var frame = new JFrame("patan-test");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setMinimumSize(new Dimension(256, 144));
 			var text = new JTextField("Wait for terminal");
