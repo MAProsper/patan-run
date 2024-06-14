@@ -1,11 +1,11 @@
 # Tests
 Must set working directory to `test` and execute manually with valid account in target server.
-Prefix all commands with `HIST=.cache/patan-test` to isolate execution.
+Prefix all commands with `HIST=.cache/patan-test` to isolate remote execution environment.
 
 ## patan-run
 **Important**: Modifies software installation. Replace path and user appropriately.
 ```sh
-bash -i ./install ../patan-run alXXXXXX
+bash -i ./install.sh ../patan-run alXXXXXX
 ```
 - System writes `1` to terminal.
 - System writes `0` to terminal.
