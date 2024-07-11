@@ -8,7 +8,7 @@
 ```sh
 bash -i install.sh ../patan-run alXXXXXX
 ```
-- System writes `1` to terminal.
+- System writes `X` to terminal.
 - System writes `0` to terminal.
 - System writes `1` to terminal.
 - System writes `0` to terminal.
