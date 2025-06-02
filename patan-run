@@ -6,7 +6,7 @@
 # 	tester		Adrián Masiá Moreno		(al386159@uji.es)
 # 	tester		Adrián Luque Bueso		(al387532@uji.es)
 # 	license		BSD 3-Clause
-# 	version		10.0.0
+# 	version		10.0.0-local
 log() { info "$VAR" &>"$LOG"; script -qac "$(arg "$@")" "$LOG"; }; set -e
 info() { echo "$NAME: $*" >&2; }; err() { info "$*"; exit 1; }; arg() { printf '%q ' "$@"; }
 NAME='patan-run'; RWD="${HIST=.local/state/$NAME}/${ID=$(date +%F-%H-%M-%S-$$)}"
@@ -20,7 +20,7 @@ TYPE="$2"; VAR=$(arg "$@"); TMP=".$NAME-$ID"; JOB="$TMP/$NAME"; LOG="$TMP/log"
 EXE="$HOME/.local/bin/$NAME"; SCP="$HOME/.ssh/$NAME";: "${ENV=$HOME/.${SHELL##*/}rc}"
 DST="$1@patan.act.uji.es"; JUMP="${PROXY-$1}@lynx.uji.es"; RC="alias $NAME=$(arg "$(arg "$EXE" "$1")")"
 OPT="-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa -oPreferredAuthentications=password"
-SSH="ssh $OPT -oControlMaster=auto -oControlPersist=${TMOUT=256} -q${DISPLAY+Y}S $SCP -J $JUMP $DST"
+SSH="ssh $OPT -oControlMaster=auto -oControlPersist=${TMOUT=256} -q${DISPLAY+Y}S $SCP $DST"
 man() { err "$(tuc "$2" "$1" | sed -n '/^#!/d;/^# /!q;s///;p')"; }; ret() { err 'restart terminal'; }
 exe() { echo "HIST=$HIST; ID=$ID; set -- $VAR"; tuc 'usr' 'bin'; tuc "$1" "$NAME"; tuc "$@"; }
 rmc() { [ -f "$ENV" ] && grep -v "^${RC%%=*}=" <<<"$(<"$ENV")" >"$ENV" || :; }
